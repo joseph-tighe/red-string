@@ -36,3 +36,11 @@
     const InLine = `(${author.split(", ")[0]}, ${metaDate})`;
     document.getElementById("content2").innerText = InLine;
 })();
+
+document.getElementById("copy").addEventListener("click", function() {
+    navigator.clipboard.writeText(document.getElementById("content").innerText);
+});
+
+document.getElementById("copy2").addEventListener("click", function() {
+    navigator.clipboard.writeText(document.getElementById("content2").innerText);
+});
