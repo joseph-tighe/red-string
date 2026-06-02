@@ -1,19 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="viewCites.css">
 </head>
 <body>
-<div class="split">
-    <h1>MLA Citations</h1>
-    <h1>Inline Citations</h1>
-</div>
-<div class="split">
-<div id="mla"></div>
-<div id="inline"></div>
-</div>
-<button id="remove">Delete All Citations</button>
-<script src="viewCites.js"></script>
+    <header>
+        <div class="header-left">
+            <h1>Red String</h1>
+            <span class="subtitle">Saved Citations</span>
+        </div>
+        <button id="removeAll" class="danger-btn">Delete All</button>
+    </header>
+
+    <div class="toolbar">
+        <input type="text" id="search" placeholder="Search citations..." spellcheck="false">
+        <div class="filter-tabs">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="mla">Full</button>
+            <button class="filter-btn" data-filter="inline">In-Text</button>
+        </div>
+    </div>
+
+    <div id="empty-state" class="hidden">
+        <div class="empty-icon">📝</div>
+        <p>No citations saved yet</p>
+        <p class="empty-hint">Citations will appear here as you browse and save them from the extension popup.</p>
+    </div>
+
+    <div id="list" class="citation-list"></div>
+
+    <div id="modal-overlay" class="hidden">
+        <div id="modal">
+            <p>Delete all saved citations?</p>
+            <div class="modal-actions">
+                <button id="modal-cancel" class="btn-secondary">Cancel</button>
+                <button id="modal-confirm" class="danger-btn">Delete All</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="hidden"></div>
+
+    <script src="viewCites.js"></script>
 </body>
 </html>

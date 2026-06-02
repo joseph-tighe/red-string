@@ -1,61 +1,115 @@
-(async function main() {
-    var Url, title, articleTitle, author, metaAuthor, metaPublisher, metaDate, tabId;
-    currentTab = (await chrome.tabs.query({active: true, currentWindow: true}))[0];
+function show(id) {
+    document.querySelectorAll('.state').forEach(el => el.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+}
 
-    tabId = currentTab.id;
-    Url = currentTab.url;
-    title = currentTab.title;
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('hidden');
+    setTimeout(() => t.classList.add('hidden'), 1800);
+}
 
-    // Listen for messages from the content script
-    chrome.scripting.executeScript( { target: { tabId }, func: () => {
-        return document.querySelector('h1').innerText;
-    }}).then(results => {
-        articleTitle = '"'+results[0].result+'"';
+function formatAuthor(raw) {
+    if (!raw) return '';
+    const parts = raw.trim().split(/\s+/);
+    if (parts.length < 2) return raw.trim();
+    const last = parts.pop();
+    return `${last}, ${parts.join(' ')}`;
+}
+
+async function getMeta(tabId, selectors) {
+    const r = await chrome.scripting.executeScript({
+        target: { tabId },
+        func: (s) => document.querySelector(s)?.content || '',
+        args: [selectors]
     });
-    //get data from meta tags
-    let results = await chrome.scripting.executeScript( { target: { tabId }, func: () => {
-        return document.querySelector('meta[name="author"], meta[property="article:author"], meta[property="og:article:author"], meta[name="byl"]')?.content
-    }})
-    metaAuthor = results[0].result;
-    results = await chrome.scripting.executeScript( { target: { tabId }, func: () => {
-        return document.querySelector('meta[name="publisher"], meta[property="article:publisher"], meta[property="og:article:publisher"]')?.content
-    }})
-    metaPublisher = results[0].result;
-    results = await chrome.scripting.executeScript( { target: { tabId }, func: () => {
-        return document.querySelector('meta[name="date"], meta[property="article:published_time"], meta[property="og:article:published_time"]')?.content
-    }})
-    metaDate = results[0].result;
-    if (metaAuthor.includes(" ")) {
-        author = [metaAuthor.split(" ")[0], metaAuthor.split(" ")[1]].join(", ");
-    } else {
-        author = metaAuthor;
-    }
+    return r[0]?.result || '';
+}
 
-    const MLA = `${author}. ${articleTitle}${title}, ${metaPublisher}, ${metaDate}, ${Url}`;
-    document.getElementById("content").innerText = MLA;
-    const InLine = `(${author.split(", ")[0]}, ${metaDate})`;
-    document.getElementById("content2").innerText = InLine;
-    
-    const result = await chrome.storage.local.get(["mla"]);
-    if (result != undefined) {
-        chrome.storage.local.set({ mla: result.mla + "\n" + MLA });
-    } else {
-        chrome.storage.local.set({ "mla": MLA });
-    }
-    const result2 = await chrome.storage.local.get(["inline"]);
-    if (result2 != undefined) {
-        chrome.storage.local.set({ inline: result2.inline + "\n" + InLine });
-    } else {
-        chrome.storage.local.set({ "inline": InLine });
+(async function main() {
+    show('loading');
+
+    try {
+        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tabs[0]) throw new Error('No active tab');
+        const tab = tabs[0];
+        const tabId = tab.id;
+        const pageUrl = tab.url;
+        const pageTitle = tab.title || '';
+
+        if (!pageUrl || pageUrl.startsWith('chrome://') || pageUrl.startsWith('about:')) {
+            throw new Error('Cannot cite browser pages');
+        }
+
+        const h1 = await chrome.scripting.executeScript({
+            target: { tabId },
+            func: () => document.querySelector('h1')?.innerText?.trim() || ''
+        });
+        const articleTitle = (h1[0]?.result || '').replace(/\s+/g, ' ');
+
+        const author = formatAuthor(await getMeta(tabId,
+            'meta[name="author"], meta[property="article:author"], meta[property="og:article:author"], meta[name="byl"]'
+        ));
+        const publisher = await getMeta(tabId,
+            'meta[name="publisher"], meta[property="article:publisher"], meta[property="og:article:publisher"]'
+        );
+        const date = await getMeta(tabId,
+            'meta[name="date"], meta[property="article:published_time"], meta[property="og:article:published_time"]'
+        );
+
+        const authorPart = author ? `${author}. ` : '';
+        const titlePart = articleTitle ? `"${articleTitle}." ` : '';
+        const pubPart = publisher ? `${publisher}, ` : '';
+        const datePart = date ? `${date}, ` : '';
+
+        const MLA = `${authorPart}${titlePart}${pageTitle}, ${pubPart}${datePart}${pageUrl}`;
+        const lastName = author ? author.split(',')[0] : author;
+        const InLine = `(${lastName || 'Author'}, ${date || 'n.d.'})`;
+
+        document.getElementById('content').textContent = MLA;
+        document.getElementById('content2').textContent = InLine;
+
+        const { mla: existingMla } = await chrome.storage.local.get(['mla']);
+        const { inline: existingInline } = await chrome.storage.local.get(['inline']);
+        await chrome.storage.local.set({
+            mla: existingMla ? existingMla + '\n' + MLA : MLA,
+            inline: existingInline ? existingInline + '\n' + InLine : InLine
+        });
+
+        show('results');
+    } catch (err) {
+        document.getElementById('error-msg').textContent = err.message;
+        show('error');
     }
 })();
 
-document.getElementById("copy").addEventListener("click", function() {
-    navigator.clipboard.writeText(document.getElementById("content").innerText);
+document.getElementById('copy').addEventListener('click', async function () {
+    const text = document.getElementById('content').textContent;
+    if (!text) return;
+    try {
+        await navigator.clipboard.writeText(text);
+        this.classList.add('copied');
+        this.textContent = 'Copied!';
+        setTimeout(() => { this.classList.remove('copied'); this.textContent = 'Copy'; }, 1500);
+    } catch {
+        showToast('Failed to copy');
+    }
 });
-document.getElementById("viewCites").addEventListener("click", function() {
-    chrome.tabs.create({url: "viewCites.html"});
+
+document.getElementById('copy2').addEventListener('click', async function () {
+    const text = document.getElementById('content2').textContent;
+    if (!text) return;
+    try {
+        await navigator.clipboard.writeText(text);
+        this.classList.add('copied');
+        this.textContent = 'Copied!';
+        setTimeout(() => { this.classList.remove('copied'); this.textContent = 'Copy'; }, 1500);
+    } catch {
+        showToast('Failed to copy');
+    }
 });
-document.getElementById("copy2").addEventListener("click", function() {
-    navigator.clipboard.writeText(document.getElementById("content2").innerText);
+
+document.getElementById('viewCites').addEventListener('click', function () {
+    chrome.tabs.create({ url: chrome.runtime.getURL('viewCites.html') });
 });

@@ -1,21 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-    <div class="MLA"><h1>MLA 8 Citation</h1>
-    <p id="content"></p>
-        <button id="copy">Copy</button>
+    <header>
+        <span class="brand">Red String</span>
+        <span class="badge">MLA 8</span>
+    </header>
+
+    <div id="loading" class="state">
+        <div class="spinner"></div>
+        <p>Generating citation...</p>
     </div>
-    <div class="Inline"><h1>Inline Citation</h1>
-    <p id="content2"></p>
-        <button id="copy2">Copy</button>
+
+    <div id="error" class="state hidden">
+        <p class="error-icon">!</p>
+        <p id="error-msg">Could not generate citation</p>
     </div>
-    <div class="viewCites">
-        <button id="viewCites">View Other Citations</button>
+
+    <div id="results" class="hidden">
+        <section class="card">
+            <div class="card-header">
+                <h2>Full Citation</h2>
+                <button class="copy-btn" id="copy">Copy</button>
+            </div>
+            <div class="card-body">
+                <p id="content" class="citation-text"></p>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <h2>In-Text Citation</h2>
+                <button class="copy-btn" id="copy2">Copy</button>
+            </div>
+            <div class="card-body">
+                <p id="content2" class="citation-text"></p>
+            </div>
+        </section>
     </div>
+
+    <footer>
+        <button id="viewCites" class="link-btn">View All Saved Citations</button>
+    </footer>
+
+    <div id="toast" class="hidden"></div>
+
     <script src="popup.js"></script>
 </body>
 </html>

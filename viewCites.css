@@ -1,23 +1,321 @@
-.split {
-    width: 100%;
-    height: 100%;
-    background-color: white;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Georgia, "Times New Roman", serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #f4f4f4;
+    min-height: 100vh;
+}
+
+header {
     display: flex;
-    flex-direction: row;
+    align-items: center;
     justify-content: space-between;
+    padding: 16px 24px;
+    background: #8b1a1a;
+    color: #fff;
 }
-#mla {
-    width: 50%;
-    height: 100%;
-    padding: 10px;
-    border-right: 1px solid black;
+
+.header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
 }
-#inline {
-    width: 50%;
-    height: 100%;
-    padding: 10px;
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
 }
-h1 {
-    width: 50%;
+
+.subtitle {
+    font-size: 14px;
+    opacity: 0.75;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 24px;
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+}
+
+#search {
+    flex: 1;
+    min-width: 200px;
+    padding: 9px 14px;
+    font-size: 14px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+#search:focus {
+    border-color: #8b1a1a;
+    box-shadow: 0 0 0 2px rgba(139, 26, 26, 0.12);
+}
+
+.filter-tabs {
+    display: flex;
+    gap: 4px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    padding: 3px;
+}
+
+.filter-btn {
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: #555;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+}
+
+.filter-btn.active {
+    background: #fff;
+    color: #8b1a1a;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.filter-btn:hover:not(.active) {
+    color: #8b1a1a;
+}
+
+.citation-list {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 20px 24px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.citation-card {
+    background: #fff;
+    border: 1px solid #e4e4e4;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: box-shadow 0.15s;
+}
+
+.citation-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.citation-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: #fafafa;
+    border-bottom: 1px solid #eee;
+    gap: 12px;
+}
+
+.citation-type-badge {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    background: #e8f0ec;
+    color: #8b1a1a;
+    white-space: nowrap;
+}
+
+.citation-card-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.citation-card-body {
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #222;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+.icon-btn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #d0d0d0;
+    border-radius: 5px;
+    background: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+
+.icon-btn:hover {
+    background: #f5f5f5;
+    border-color: #bbb;
+}
+
+.icon-btn.copy-done {
+    background: #2e7d32;
+    border-color: #2e7d32;
+    color: #fff;
+}
+
+.icon-btn.delete-done {
+    background: #d32f2f;
+    border-color: #d32f2f;
+    color: #fff;
+}
+
+#empty-state {
     text-align: center;
+    padding: 80px 24px;
+    color: #888;
+}
+
+#empty-state:not(.hidden) + #list {
+    display: none;
+}
+
+.empty-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+}
+
+#empty-state p {
+    font-size: 16px;
+}
+
+.empty-hint {
+    font-size: 14px !important;
+    margin-top: 6px;
+    opacity: 0.7;
+}
+
+.danger-btn {
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #d32f2f;
+    border-radius: 6px;
+    background: transparent;
+    color: #d32f2f;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+}
+
+.danger-btn:hover {
+    background: #d32f2f;
+    color: #fff;
+}
+
+#modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+
+#modal {
+    background: #fff;
+    border-radius: 10px;
+    padding: 28px 32px;
+    min-width: 320px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+#modal p {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.btn-secondary {
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+}
+
+.btn-secondary:hover {
+    background: #f5f5f5;
+}
+
+#toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #323232;
+    color: #fff;
+    font-size: 14px;
+    padding: 10px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    z-index: 300;
+    white-space: nowrap;
+    transition: opacity 0.25s;
+}
+
+#toast:not(.hidden) {
+    animation: fadeInUp 0.25s ease;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 600px) {
+    header {
+        padding: 14px 16px;
+    }
+    .toolbar {
+        padding: 12px 16px;
+    }
+    .citation-list {
+        padding: 12px 12px 24px;
+    }
 }
