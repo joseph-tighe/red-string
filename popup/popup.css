@@ -86,7 +86,12 @@ button:active {
   background-color: #298e46;
   box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
 }
+.viewCites {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 #viewCites {
-    margin: 10px;
-    width: 100%;
+
+    width: 90%;
 }

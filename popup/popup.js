@@ -40,7 +40,9 @@
 document.getElementById("copy").addEventListener("click", function() {
     navigator.clipboard.writeText(document.getElementById("content").innerText);
 });
-
+document.getElementById("viewCites").addEventListener("click", function() {
+    chrome.tabs.create({url: "viewCites.html"});
+});
 document.getElementById("copy2").addEventListener("click", function() {
     navigator.clipboard.writeText(document.getElementById("content2").innerText);
 });
