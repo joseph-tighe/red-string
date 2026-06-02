@@ -7,7 +7,12 @@
     "128": "icons/icon-128.png"
   },
   "permissions": [
-    "tabs"
+    "activeTab",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://*/*"
   ],
   "action": {
     "default_popup": "popup/popup.html"
