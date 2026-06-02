@@ -32,5 +32,5 @@
     }
 
     const MLA = `${author}. ${articleTitle}${title}, ${metaPublisher}, ${metaDate}, ${Url}`;
-    alert(MLA);
+    document.getElementById("content").innerText = MLA;
 })();
