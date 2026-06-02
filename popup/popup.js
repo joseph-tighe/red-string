@@ -33,4 +33,6 @@
 
     const MLA = `${author}. ${articleTitle}${title}, ${metaPublisher}, ${metaDate}, ${Url}`;
     document.getElementById("content").innerText = MLA;
+    const InLine = `(${author.split(", ")[0]}, ${metaDate})`;
+    document.getElementById("content2").innerText = InLine;
 })();
