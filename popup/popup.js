@@ -38,9 +38,15 @@
     
     const result = await chrome.storage.local.get(["mla"]);
     if (result != undefined) {
-        await chrome.storage.local.set({ mla: result.mla + "\n" + MLA });
+        chrome.storage.local.set({ mla: result.mla + "\n" + MLA });
     } else {
-        await chrome.storage.local.set({ "mla": MLA });
+        chrome.storage.local.set({ "mla": MLA });
+    }
+    const result2 = await chrome.storage.local.get(["inline"]);
+    if (result2 != undefined) {
+        chrome.storage.local.set({ inline: result2.inline + "\n" + InLine });
+    } else {
+        chrome.storage.local.set({ "inline": InLine });
     }
 })();
 
