@@ -10,7 +10,8 @@
     "activeTab",
     "tabs",
     "scripting",
-    "clipboardWrite"
+    "clipboardWrite",
+    "storage"
   ],
   "host_permissions": [
     "https://*/*"

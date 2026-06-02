@@ -35,6 +35,13 @@
     document.getElementById("content").innerText = MLA;
     const InLine = `(${author.split(", ")[0]}, ${metaDate})`;
     document.getElementById("content2").innerText = InLine;
+    
+    const result = await chrome.storage.local.get(["mla"]);
+    if (result != undefined) {
+        await chrome.storage.local.set({ mla: result.mla + "\n" + MLA });
+    } else {
+        await chrome.storage.local.set({ "mla": MLA });
+    }
 })();
 
 document.getElementById("copy").addEventListener("click", function() {
