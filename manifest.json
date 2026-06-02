@@ -1,5 +1,5 @@
 {
-  "manifest_version": 1,
+  "manifest_version": 3,
   "name": "Red String",
   "version": "0.0.1",
   "description": "A research helper",
