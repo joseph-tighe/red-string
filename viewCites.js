@@ -28,7 +28,6 @@ function render(citations, query = '') {
             <div class="citation-card-header">
                 <span class="citation-number">Citation ${idx + 1}</span>
                 <div class="citation-card-actions">
-                    <button class="icon-btn copy-pair" data-idx="${idx}" title="Copy Both">📋</button>
                     <button class="icon-btn delete-pair" data-idx="${idx}" title="Delete">✕</button>
                 </div>
             </div>
@@ -52,21 +51,6 @@ function render(citations, query = '') {
         </div>
     `).join('');
 
-    list.querySelectorAll('.copy-pair').forEach(btn => {
-        btn.addEventListener('click', async function () {
-            const idx = parseInt(this.dataset.idx);
-            const m = citations.mla[idx];
-            const i = citations.inline[idx];
-            if (!m && !i) return;
-            try {
-                await navigator.clipboard.writeText(`${m}\n${i}`);
-                this.textContent = '✓';
-                this.classList.add('copy-done');
-                setTimeout(() => { this.textContent = '📋'; this.classList.remove('copy-done'); }, 1000);
-            } catch { showToast('Failed to copy'); }
-        });
-    });
-
     list.querySelectorAll('.copy-part').forEach(btn => {
         btn.addEventListener('click', async function () {
             const idx = parseInt(this.dataset.idx);
@@ -76,7 +60,7 @@ function render(citations, query = '') {
                 await navigator.clipboard.writeText(text);
                 this.textContent = 'Copied!';
                 this.classList.add('copy-done');
-                setTimeout(() => { this.textContent = this.dataset.part === 'mla' ? 'Copy' : 'Copy'; this.classList.remove('copy-done'); }, 1000);
+                setTimeout(() => { this.textContent = 'Copy'; this.classList.remove('copy-done'); }, 1000);
             } catch { showToast('Failed to copy'); }
         });
     });
