@@ -5,52 +5,61 @@ function showToast(msg) {
     setTimeout(() => t.classList.add('hidden'), 1800);
 }
 
-function render(citations, filter = 'all', query = '') {
+function render(citations, query = '') {
     const list = document.getElementById('list');
     const empty = document.getElementById('empty-state');
 
-    let items = [];
-    citations.mla.forEach((c, i) => items.push({ type: 'mla', text: c, index: i }));
-    citations.inline.forEach((c, i) => items.push({ type: 'inline', text: c, index: i }));
+    let pairs = citations.mla.map((m, i) => ({ mla: m, inline: citations.inline[i] || '' }));
 
-    if (filter !== 'all') items = items.filter(i => i.type === filter);
     if (query) {
         const q = query.toLowerCase();
-        items = items.filter(i => i.text.toLowerCase().includes(q));
+        pairs = pairs.filter(p => p.mla.toLowerCase().includes(q) || p.inline.toLowerCase().includes(q));
     }
 
-    if (items.length === 0) {
+    if (pairs.length === 0) {
         empty.classList.remove('hidden');
         list.innerHTML = '';
         return;
     }
     empty.classList.add('hidden');
 
-    list.innerHTML = items.map((item, idx) => {
-        const typeLabel = item.type === 'mla' ? 'Full Citation' : 'In-Text Citation';
-        const typeClass = item.type === 'mla' ? 'mla' : 'inline';
-        const dataIdx = `${item.type}-${item.index}`;
-        return `
-            <div class="citation-card" data-idx="${dataIdx}">
-                <div class="citation-card-header">
-                    <span class="citation-type-badge">${typeLabel}</span>
-                    <div class="citation-card-actions">
-                        <button class="icon-btn copy-card" data-idx="${dataIdx}" title="Copy">📋</button>
-                        <button class="icon-btn delete-card" data-idx="${dataIdx}" title="Delete">✕</button>
-                    </div>
+    list.innerHTML = pairs.map((pair, idx) => `
+        <div class="citation-card" data-idx="${idx}">
+            <div class="citation-card-header">
+                <span class="citation-number">Citation ${idx + 1}</span>
+                <div class="citation-card-actions">
+                    <button class="icon-btn copy-pair" data-idx="${idx}" title="Copy Both">📋</button>
+                    <button class="icon-btn delete-pair" data-idx="${idx}" title="Delete">✕</button>
                 </div>
-                <div class="citation-card-body">${escapeHtml(item.text)}</div>
             </div>
-        `;
-    }).join('');
+            <div class="citation-card-body">
+                <div class="pair-entry">
+                    <div class="pair-label">
+                        <span>Full Citation</span>
+                        <button class="copy-part" data-idx="${idx}" data-part="mla" title="Copy full">Copy</button>
+                    </div>
+                    <p class="pair-text">${escapeHtml(pair.mla)}</p>
+                </div>
+                <div class="pair-divider"></div>
+                <div class="pair-entry">
+                    <div class="pair-label">
+                        <span>In-Text Citation</span>
+                        <button class="copy-part" data-idx="${idx}" data-part="inline" title="Copy in-text">Copy</button>
+                    </div>
+                    <p class="pair-text">${escapeHtml(pair.inline)}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
 
-    list.querySelectorAll('.copy-card').forEach(btn => {
+    list.querySelectorAll('.copy-pair').forEach(btn => {
         btn.addEventListener('click', async function () {
-            const [type, idx] = this.dataset.idx.split('-');
-            const text = citations[type][parseInt(idx)];
-            if (!text) return;
+            const idx = parseInt(this.dataset.idx);
+            const m = citations.mla[idx];
+            const i = citations.inline[idx];
+            if (!m && !i) return;
             try {
-                await navigator.clipboard.writeText(text);
+                await navigator.clipboard.writeText(`${m}\n${i}`);
                 this.textContent = '✓';
                 this.classList.add('copy-done');
                 setTimeout(() => { this.textContent = '📋'; this.classList.remove('copy-done'); }, 1000);
@@ -58,16 +67,30 @@ function render(citations, filter = 'all', query = '') {
         });
     });
 
-    list.querySelectorAll('.delete-card').forEach(btn => {
+    list.querySelectorAll('.copy-part').forEach(btn => {
         btn.addEventListener('click', async function () {
-            const [type, idx] = this.dataset.idx.split('-');
-            const index = parseInt(idx);
-            citations[type].splice(index, 1);
+            const idx = parseInt(this.dataset.idx);
+            const text = citations[this.dataset.part][idx];
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+                this.textContent = 'Copied!';
+                this.classList.add('copy-done');
+                setTimeout(() => { this.textContent = this.dataset.part === 'mla' ? 'Copy' : 'Copy'; this.classList.remove('copy-done'); }, 1000);
+            } catch { showToast('Failed to copy'); }
+        });
+    });
+
+    list.querySelectorAll('.delete-pair').forEach(btn => {
+        btn.addEventListener('click', async function () {
+            const idx = parseInt(this.dataset.idx);
+            citations.mla.splice(idx, 1);
+            citations.inline.splice(idx, 1);
             await chrome.storage.local.set({
                 mla: citations.mla.join('\n'),
                 inline: citations.inline.join('\n')
             });
-            render(citations, document.querySelector('.filter-btn.active').dataset.filter, document.getElementById('search').value);
+            render(citations, document.getElementById('search').value);
             showToast('Citation deleted');
         });
     });
@@ -89,16 +112,7 @@ function escapeHtml(text) {
     render(citations);
 
     document.getElementById('search').addEventListener('input', function () {
-        const filter = document.querySelector('.filter-btn.active').dataset.filter;
-        render(citations, filter, this.value);
-    });
-
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            render(citations, this.dataset.filter, document.getElementById('search').value);
-        });
+        render(citations, this.value);
     });
 
     document.getElementById('removeAll').addEventListener('click', function () {

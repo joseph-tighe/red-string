@@ -46,12 +46,10 @@ header h1 {
     padding: 14px 24px;
     background: #fff;
     border-bottom: 1px solid #e0e0e0;
-    flex-wrap: wrap;
 }
 
 #search {
     flex: 1;
-    min-width: 200px;
     padding: 9px 14px;
     font-size: 14px;
     border: 1px solid #d0d0d0;
@@ -66,44 +64,13 @@ header h1 {
     box-shadow: 0 0 0 2px rgba(139, 26, 26, 0.12);
 }
 
-.filter-tabs {
-    display: flex;
-    gap: 4px;
-    background: #f0f0f0;
-    border-radius: 6px;
-    padding: 3px;
-}
-
-.filter-btn {
-    padding: 6px 16px;
-    font-size: 13px;
-    font-weight: 500;
-    border: none;
-    border-radius: 4px;
-    background: transparent;
-    color: #555;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.15s;
-}
-
-.filter-btn.active {
-    background: #fff;
-    color: #8b1a1a;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.filter-btn:hover:not(.active) {
-    color: #8b1a1a;
-}
-
 .citation-list {
     max-width: 860px;
     margin: 0 auto;
     padding: 20px 24px 40px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
 }
 
 .citation-card {
@@ -128,16 +95,10 @@ header h1 {
     gap: 12px;
 }
 
-.citation-type-badge {
-    font-size: 11px;
+.citation-number {
+    font-size: 12px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 2px 10px;
-    border-radius: 10px;
-    background: #e8f0ec;
-    color: #8b1a1a;
-    white-space: nowrap;
+    color: #555;
 }
 
 .citation-card-actions {
@@ -147,13 +108,65 @@ header h1 {
 }
 
 .citation-card-body {
+    padding: 0;
+}
+
+.pair-entry {
     padding: 14px 16px;
+}
+
+.pair-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.pair-label span {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #777;
+}
+
+.pair-divider {
+    height: 1px;
+    background: #e8e8e8;
+    margin: 0 16px;
+}
+
+.pair-text {
     font-size: 14px;
     line-height: 1.7;
     color: #222;
     word-break: break-word;
     overflow-wrap: break-word;
     hyphens: auto;
+}
+
+.copy-part {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border: 1px solid #8b1a1a;
+    border-radius: 4px;
+    background: #fff;
+    color: #8b1a1a;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+}
+
+.copy-part:hover {
+    background: #8b1a1a;
+    color: #fff;
+}
+
+.copy-part.copy-done {
+    background: #8b1a1a;
+    border-color: #8b1a1a;
+    color: #fff;
 }
 
 .icon-btn {
@@ -177,8 +190,8 @@ header h1 {
 }
 
 .icon-btn.copy-done {
-    background: #2e7d32;
-    border-color: #2e7d32;
+    background: #8b1a1a;
+    border-color: #8b1a1a;
     color: #fff;
 }
 
