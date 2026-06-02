@@ -1,8 +1,9 @@
+var Url, title, articleTitle;
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-     const Url = tabs[0].url;
+      Url = tabs[0].url;
 });
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-     const title = tabs[0].title;
+      title = tabs[0].title;
 });
 
 // Listen for messages from the content script
@@ -12,9 +13,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     } else {
         articleTitle = "";
     }
-});
-
-
+    });
 //get data from meta tags
 const metaAuthor = document.querySelector('meta[name="author"], meta[property="article:author"], meta[property="og:article:author"], meta[name="byl"]')?.content;
 const metaPublisher = document.querySelector('meta[name="publisher"], meta[property="article:publisher"], meta[property="og:article:publisher"]')?.content;
@@ -29,3 +28,5 @@ if (metaAuthor.includes(" ")) {
 const MLA = `${author}. ${articleTitle}${title}, ${metaPublisher}, ${metaDate}, ${Url}`;
 
 document.getElementById("content").innerHTML = MLA;
+
+
