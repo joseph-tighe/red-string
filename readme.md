@@ -1,3 +1,5 @@
 # Red string
 
-Red string is a chrome extension that generates a MLA 8 citation for the current page.
+Red string is a browser extension that generates a MLA 8 and inline citations.
+
+
