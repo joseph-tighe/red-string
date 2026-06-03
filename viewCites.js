@@ -70,7 +70,7 @@ function render(citations, query = '') {
             const idx = parseInt(this.dataset.idx);
             citations.mla.splice(idx, 1);
             citations.inline.splice(idx, 1);
-            await chrome.storage.local.set({
+            await browser.storage.local.set({
                 mla: citations.mla.join('\n'),
                 inline: citations.inline.join('\n')
             });
@@ -87,7 +87,7 @@ function escapeHtml(text) {
 }
 
 (async function init() {
-    const { mla = '', inline = '' } = await chrome.storage.local.get(['mla', 'inline']);
+    const { mla = '', inline = '' } = await browser.storage.local.get(['mla', 'inline']);
     const citations = {
         mla: mla ? mla.split('\n').filter(Boolean) : [],
         inline: inline ? inline.split('\n').filter(Boolean) : []
@@ -110,7 +110,7 @@ function escapeHtml(text) {
     document.getElementById('modal-confirm').addEventListener('click', async function () {
         citations.mla = [];
         citations.inline = [];
-        await chrome.storage.local.set({ mla: '', inline: '' });
+        await browser.storage.local.set({ mla: '', inline: '' });
         document.getElementById('modal-overlay').classList.add('hidden');
         render(citations);
         showToast('All citations deleted');

@@ -19,7 +19,7 @@ function formatAuthor(raw) {
 }
 
 async function getMeta(tabId, selectors) {
-    const r = await chrome.scripting.executeScript({
+    const r = await browser.scripting.executeScript({
         target: { tabId },
         func: (s) => document.querySelector(s)?.content || '',
         args: [selectors]
@@ -31,18 +31,18 @@ async function getMeta(tabId, selectors) {
     show('loading');
 
     try {
-        const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        const tabs = await browser.tabs.query({ active: true, currentWindow: true });
         if (!tabs[0]) throw new Error('No active tab');
         const tab = tabs[0];
         const tabId = tab.id;
         const pageUrl = tab.url;
         const pageTitle = tab.title || '';
 
-        if (!pageUrl || pageUrl.startsWith('chrome://') || pageUrl.startsWith('about:')) {
+        if (!pageUrl || pageUrl.startsWith('browser://') || pageUrl.startsWith('about:')) {
             throw new Error('Cannot cite browser pages');
         }
 
-        const h1 = await chrome.scripting.executeScript({
+        const h1 = await browser.scripting.executeScript({
             target: { tabId },
             func: () => document.querySelector('h1')?.innerText?.trim() || ''
         });
@@ -70,9 +70,9 @@ async function getMeta(tabId, selectors) {
         document.getElementById('content').textContent = MLA;
         document.getElementById('content2').textContent = InLine;
 
-        const { mla: existingMla } = await chrome.storage.local.get(['mla']);
-        const { inline: existingInline } = await chrome.storage.local.get(['inline']);
-        await chrome.storage.local.set({
+        const { mla: existingMla } = await browser.storage.local.get(['mla']);
+        const { inline: existingInline } = await browser.storage.local.get(['inline']);
+        await browser.storage.local.set({
             mla: existingMla ? existingMla + '\n' + MLA : MLA,
             inline: existingInline ? existingInline + '\n' + InLine : InLine
         });
@@ -111,5 +111,5 @@ document.getElementById('copy2').addEventListener('click', async function () {
 });
 
 document.getElementById('viewCites').addEventListener('click', function () {
-    chrome.tabs.create({ url: chrome.runtime.getURL('viewCites.html') });
+    browser.tabs.create({ url: browser.runtime.getURL('viewCites.html') });
 });
