@@ -26,7 +26,14 @@ async function getMeta(tabId, selectors) {
     });
     return r[0]?.result || '';
 }
+async function getAuthor(tabId) {
+    meta = getMeta(tabId, 'meta[name="author"], meta[property="article:author"], meta[property="og:article:author"], meta[name="byl"], h2[itemprop="author"], h1[itemprop="author"], p.username, , h2[itemprop="name"], h1[itemprop="name"], h3[itemprop="author"]');
 
+    return formatAuthor(meta);
+}
+function getInTextAuthor(tabId) { 
+
+}
 (async function main() {
     show('loading');
 
@@ -48,9 +55,7 @@ async function getMeta(tabId, selectors) {
         });
         const articleTitle = (h1[0]?.result || '').replace(/\s+/g, ' ');
 
-        const author = formatAuthor(await getMeta(tabId,
-            'meta[name="author"], meta[property="article:author"], meta[property="og:article:author"], meta[name="byl"]'
-        ));
+        const author = await getAuthor(tabId);
         const publisher = await getMeta(tabId,
             'meta[name="publisher"], meta[property="article:publisher"], meta[property="og:article:publisher"]'
         );
