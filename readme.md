@@ -7,8 +7,7 @@ Red string is a chrome extension that generates a MLA 8 citation for the current
 # Using the extension
 [Firefox install](https://addons.mozilla.org/en-US/firefox/addon/red-string-reaserch/)
 
-*No google chrome support yet - costs too much to post on the chrome store*
-
+[Google Chrome Install](https://chromewebstore.google.com/detail/red-string/oejgiicopolenjojlibfjiachjbmaimp)
 # Features
 - Generates MLA 8 citation for the current page
 - Copies citation to clipboard
