@@ -24,7 +24,16 @@ async function getMeta(tabId, selectors) {
         func: (s) => document.querySelector(s)?.content || '',
         args: [selectors]
     });
-    return r[0]?.result || '';
+    if (r) {
+        return r[0]?.result || '';
+    } else {
+        const r2 = await browser.scripting.executeScript({
+            target: { tabId },
+            func: (s) => document.querySelector(s)?.textContent || '',
+            args: [selectors]
+        });
+        return r2[0]?.result || '';
+    }
 }
 
 async function getAuthor(tabId) {
