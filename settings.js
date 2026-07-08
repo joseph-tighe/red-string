@@ -11,6 +11,8 @@ browser.storage.local.get('format').then(({ format }) => {
     if (format) {
         const match = Array.from(radios).find(r => r.value === format);
         if (match) match.checked = true;
+    } else {
+        radios[0].checked = true;
     }
 });
 
