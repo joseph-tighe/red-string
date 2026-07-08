@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Settings</title>
+    <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+    <header>
+        <div>
+            <h1>Red String</h1>
+            <span class="subtitle">Settings</span>
+        </div>
+    </header>
+
+    <div class="settings-list">
+        <section class="card">
+            <div class="card-header">
+                <h2>Citation Format</h2>
+            </div>
+            <div class="card-body">
+                <div class="format-option">
+                    <input type="radio" name="format" id="fmt-mla" value="MLA">
+                    <label for="fmt-mla">MLA 8 Citation</label>
+                </div>
+                <div class="format-option">
+                    <input type="radio" name="format" id="fmt-ada" value="ADA">
+                    <label for="fmt-ada">ADA Citation</label>
+                </div>
+                <div class="format-option">
+                    <input type="radio" name="format" id="fmt-chicago" value="Chicago">
+                    <label for="fmt-chicago">Chicago Citation</label>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="toast" class="hidden"></div>
+
+    <script src="settings.js"></script>
+</body>
+</html>
