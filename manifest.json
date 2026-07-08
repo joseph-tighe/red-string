@@ -21,6 +21,21 @@
   ],
   "action": {
     "default_popup": "popup/popup.html"
-    
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "123e4567-e89b-12d3-a456-426614174000@redstring",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["none"],
+        "optional": [],
+        "uses_without_permission": [
+          "extension_settings",
+          "extension_storage"
+        ],
+        "uses_with_permission": [],
+        "hosts": []
+      }
+    }
   }
 }
