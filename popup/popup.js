@@ -19,25 +19,24 @@ function formatAuthor(raw) {
 }
 
 async function getMeta(tabId, selectors) {
-    const r = await browser.scripting.executeScript({
+    var r = await browser.scripting.executeScript({
         target: { tabId },
         func: (s) => document.querySelector(s)?.content || '',
         args: [selectors]
     });
-    if (r) {
-        return r[0]?.result || '';
-    } else {
-        const r2 = await browser.scripting.executeScript({
+    if (!r) {
+        r = await browser.scripting.executeScript({
             target: { tabId },
             func: (s) => document.querySelector(s)?.textContent || '',
             args: [selectors]
         });
-        return r2[0]?.result || '';
     }
+    return r[0]?.result || '';
 }
 
 async function getAuthor(tabId) {
-    const meta = await getMeta(tabId, 'meta[name="author"], meta[property="article:author"], meta[property="og:article:author"], meta[name="byl"], h2[itemprop="author"], h1[itemprop="author"], p.username, h2[itemprop="name"], h1[itemprop="name"], h3[itemprop="author"]');
+    queries = 'meta[name="author"], meta[property="article:author"], meta[property="og:article:author"], meta[name="byl"], h2[itemprop="author"], h1[itemprop="author"], p.username, h2[itemprop="name"], h1[itemprop="name"], h3[itemprop="author"]';
+    const meta = await getMeta(tabId, queries);
     return formatAuthor(meta);
 }
 
