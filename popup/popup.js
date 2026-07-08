@@ -35,7 +35,18 @@ async function getMeta(tabId, selectors) {
 }
 
 async function getAuthor(tabId) {
-    queries = 'meta[name="author"], meta[property="article:author"], meta[property="og:article:author"], meta[name="byl"], h2[itemprop="author"], h1[itemprop="author"], p.username, h2[itemprop="name"], h1[itemprop="name"], h3[itemprop="author"]';
+    queries = `
+    meta[name="author"],
+    meta[property="article:author"],
+    meta[property="og:article:author"], 
+    meta[name="byl"],
+    h2[itemprop="author"],
+    h1[itemprop="author"],
+    p.username,
+    h2[itemprop="name"],
+    h1[itemprop="name"],
+    h3[itemprop="author"]
+    `;
     const meta = await getMeta(tabId, queries);
     return formatAuthor(meta);
 }
@@ -58,10 +69,32 @@ async function getArticleTitle(tabId, pageTitle) {
         func: () => document.querySelector('h1')?.innerText?.trim() || ''
     });
     const h1Title = (h1[0]?.result || '').replace(/\s+/g, ' ');
-    const potentialTitle = await getMeta(tabId, 'meta[name="title"], meta[property="og:title"], meta[property="twitter:title"]');
+    tags = `
+    meta[name="title"],
+    meta[property="og:title"],
+    meta[property="twitter:title"]
+    `;
+    const potentialTitle = await getMeta(tabId, tags);
     return h1Title || potentialTitle || pageTitle;
 }
-
+async function getPublisher(tabId) {
+    queries = `
+    meta[name="publisher"],
+    meta[property="article:publisher"],
+    meta[property="og:article:publisher"]
+    `;
+    const meta = await getMeta(tabId, queries);
+    return meta;
+}
+async function getPublishedDate(tabId) {
+    queries = `
+    meta[name="date"],
+    meta[property="article:published_time"],
+    meta[property="og:article:published_time"]
+    `;
+    const meta = await getMeta(tabId, queries);
+    return meta;
+}
 async function mla() {
     const tabs = await browser.tabs.query({ active: true, currentWindow: true });
     if (!tabs[0]) throw new Error('No active tab');
@@ -72,9 +105,9 @@ async function mla() {
 
     const a = await getAuthor(tabId);
     const articleTitle = await getArticleTitle(tabId, pageTitle);
-    const publisher = await getMeta(tabId, 'meta[name="publisher"], meta[property="article:publisher"], meta[property="og:article:publisher"]');
-    const date = await getMeta(tabId, 'meta[name="date"], meta[property="article:published_time"], meta[property="og:article:published_time"]');
-
+    
+    const publisher = await getPublisher(tabId);
+    const date = await getPublishedDate(tabId);
     return `${a ? a + '. ' : ''}"${articleTitle || pageTitle}." ${publisher || ''}${date ? ', ' + date : ''}, ${pageUrl}`;
 }
 
@@ -90,9 +123,8 @@ async function chicago() {
     const accessed = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     const a = await getAuthor(tabId);
     const articleTitle = await getArticleTitle(tabId, pageTitle);
-    const publisher = await getMeta(tabId, 'meta[name="publisher"], meta[property="article:publisher"], meta[property="og:article:publisher"]');
-    const date = await getMeta(tabId, 'meta[name="date"], meta[property="article:published_time"], meta[property="og:article:published_time"]');
-
+    const publisher = await getPublisher(tabId);
+    const date = await getPublishedDate(tabId);
     return `${a ? a + ', ' : ''}"${articleTitle || pageTitle}," ${publisher || ''}${date ? ', ' + date : ''}, ${pageUrl}${accessed ? ', accessed ' + accessed : ''}.`;
 }
 
@@ -107,8 +139,8 @@ async function ADA() {
 
     const a = await getAuthor(tabId);
     const articleTitle = await getArticleTitle(tabId, pageTitle);
-    const publisher = await getMeta(tabId, 'meta[name="publisher"], meta[property="article:publisher"], meta[property="og:article:publisher"]');
-    const date = await getMeta(tabId, 'meta[name="date"], meta[property="article:published_time"], meta[property="og:article:published_time"]');
+    const publisher = await getPublisher(tabId);
+    const date = await getPublishedDate(tabId);
     const year = getYear(date);
 
     return `${a ? a + '. ' : ''}${articleTitle || pageTitle}. ${publisher || ''}${year ? ', ' + year : ''}.`;
