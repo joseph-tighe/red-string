@@ -227,3 +227,38 @@ document.getElementsByClassName('settings')[0].addEventListener('click', functio
 document.getElementById('viewCites').addEventListener('click', function () {
     browser.tabs.create({ url: browser.runtime.getURL('viewCites.html') });
 });
+document.getElementById('reportBroken').addEventListener('click', async function () {
+    const ENDPOINT = "https://formspree.io/f/xpqgvzaa";
+    try {
+        const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+        const tab = tabs[0];
+        const { format = "" } = await browser.storage.local.get("format");
+        const payload = new URLSearchParams({
+            url: tab?.url || "",
+            title: tab?.title || "",
+            author: tab ? await getAuthor(tab.id) : "",
+            publisher: tab ? await getPublisher(tab.id) : "",
+            publishedDate: tab ? await getPublishedDate(tab.id) : "",
+            format: format || "",
+            citation: document.getElementById('content')?.textContent || "",
+            extensionVersion: chrome.runtime.getManifest().version
+        });
+
+        const res = await fetch(ENDPOINT, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json"
+            },
+            body: payload
+        });
+
+        if (res.ok) {
+            showToast("Report submitted. Thank you!");
+        } else {
+            showToast("Failed to submit report");
+        }
+    } catch (err) {
+        showToast("Failed to submit report");
+    }
+});
